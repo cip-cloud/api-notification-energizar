@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resumen comercial</title>
+</head>
+<body style="margin:0;padding:0;background-color:#FAF8FB;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+  <tr>
+    <td align="center" style="padding:24px 12px;">
+      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+        <!-- Header band -->
+        <tr>
+          <td style="background:#553B4F;padding:24px 28px;border-radius:12px 12px 0 0;">
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+              <tr>
+                <td>
+                  <div style="color:#EBDDE7;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;">Energizar SAS · Resumen comercial del día</div>
+                  <div style="color:#fff;font-size:22px;font-weight:800;margin-top:4px;">{{ date }}</div>
+                </td>
+                <td align="right" style="vertical-align:bottom;">
+                  <span style="display:inline-block;background:rgba(255,255,255,.13);color:#fff;padding:5px 12px;border-radius:6px;font-size:12px;font-weight:600;">
+                    {{ total_activities }} pendientes · {{ opportunities|length }} por cerrar
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Body -->
+        <tr>
+          <td style="background:#fff;padding:0 28px;border-left:1px solid #E7E2EA;border-right:1px solid #E7E2EA;">
+            <p style="font-size:15px;color:#26242B;margin:24px 0 20px;">
+              Hola <strong>{{ user_name }}</strong>, en <strong>Energizar SAS</strong> queremos que empieces el día con claridad. Este es tu resumen comercial de hoy. Empieza por lo marcado en rojo.
+            </p>
+
+            <!-- === OPPORTUNITIES (with their associated activities) === -->
+            {% if opportunities %}
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+              <tr>
+                <td style="padding-bottom:12px;">
+                  <table role="presentation" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td style="width:26px;height:26px;background:#B7790A;border-radius:7px;text-align:center;vertical-align:middle;">
+                        <span style="color:#fff;font-size:14px;">&#x1F4C5;</span>
+                      </td>
+                      <td style="padding-left:10px;">
+                        <span style="font-size:15px;font-weight:700;color:#26242B;">Oportunidades próximas a cierre</span>
+                        <span style="display:inline-block;background:#F1EEF4;color:#8B8694;font-size:11px;font-weight:700;padding:1px 8px;border-radius:20px;margin-left:8px;">{{ opportunities|length }}</span>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+            {% for o in opportunities %}
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:14px;border:1px solid #E7E2EA;border-radius:10px;overflow:hidden;">
+              <tr>
+                <td style="padding:14px 18px;background:#FBF9FC;">
+                  <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td>
+                        <div style="font-weight:700;color:#26242B;font-size:14px;">{{ o.name }}</div>
+                        <div style="font-size:12px;color:#5A5664;margin-top:2px;">{{ o.partner }} · {{ o.revenue_label }}</div>
+                      </td>
+                      <td align="right" style="white-space:nowrap;padding-left:10px;">
+                        <table role="presentation" cellpadding="0" cellspacing="0">
+                          <tr>
+                            <td style="padding-right:8px;">
+                              <span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;
+                                {% if o.urgency == 'red' %}background:#FBECEA;color:#C24338
+                                {% elif o.urgency == 'amber' %}background:#FAF0DC;color:#B7790A
+                                {% else %}background:#E6F3EC;color:#2E7D5B{% endif %};">
+                                {% if o.days_until is none %}—{% elif o.days_until == 0 %}Hoy{% elif o.days_until == 1 %}Mañana{% else %}En {{ o.days_until }} días{% endif %}
+                              </span>
+                            </td>
+                            <td style="padding-right:8px;">
+                              <span style="display:inline-block;padding:2px 8px;background:#F6F2F5;border:1px solid #D6CFDB;border-radius:6px;font-size:12px;color:#714B67;font-weight:600;">{{ o.stage }}</span>
+                            </td>
+                            <td>
+                              <span style="display:inline-block;font-size:12px;color:#5A5664;font-weight:700;">{{ o.probability }}%</span>
+                            </td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              {% if o.activities %}
+              <tr>
+                <td style="padding:10px 18px 14px;background:#fff;">
+                  <div style="font-size:11px;font-weight:700;color:#8B8694;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Actividades asociadas</div>
+                  {% for a in o.activities %}
+                  <div style="padding:3px 0;font-size:13px;color:#26242B;">
+                    <span style="display:inline-block;width:8px;height:8px;border-radius:50%;vertical-align:middle;
+                      {% if a.urgency == 'overdue' %}background:#C24338
+                      {% elif a.urgency == 'today' %}background:#B7790A
+                      {% else %}background:#2E7D5B{% endif %};"></span>
+                    <span style="vertical-align:middle;font-weight:600;">{{ a.name }}</span>
+                    <span style="color:#8B8694;font-size:12px;">· {{ a.label }}</span>
+                  </div>
+                  {% endfor %}
+                </td>
+              </tr>
+              {% endif %}
+            </table>
+            {% endfor %}
+            {% endif %}
+
+            <!-- === ACTIVITIES WITHOUT AN ASSOCIATED OPPORTUNITY === -->
+            {% if activities %}
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;">
+              <tr>
+                <td style="padding-bottom:12px;">
+                  <table role="presentation" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td style="width:26px;height:26px;background:#714B67;border-radius:7px;text-align:center;vertical-align:middle;">
+                        <span style="color:#fff;font-size:14px;">&#x1F552;</span>
+                      </td>
+                      <td style="padding-left:10px;">
+                        <span style="font-size:15px;font-weight:700;color:#26242B;">Otras actividades pendientes</span>
+                        <span style="display:inline-block;background:#F1EEF4;color:#8B8694;font-size:11px;font-weight:700;padding:1px 8px;border-radius:20px;margin-left:8px;">{{ activities|length }}</span>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="font-size:13px;">
+              <thead>
+                <tr>
+                  <th align="left" style="padding:0 8px 8px;border-bottom:1px solid #E7E2EA;font-size:11px;font-weight:700;color:#8B8694;text-transform:uppercase;letter-spacing:0.5px;">Actividad</th>
+                  <th align="left" style="padding:0 8px 8px;border-bottom:1px solid #E7E2EA;font-size:11px;font-weight:700;color:#8B8694;text-transform:uppercase;letter-spacing:0.5px;">Cliente / Oportunidad</th>
+                  <th align="left" style="padding:0 8px 8px;border-bottom:1px solid #E7E2EA;font-size:11px;font-weight:700;color:#8B8694;text-transform:uppercase;letter-spacing:0.5px;">Vence</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for a in activities %}
+                <tr>
+                  <td style="padding:10px 8px;border-bottom:1px solid #E7E2EA;">
+                    <table role="presentation" cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td width="7" height="7" style="border-radius:50%;{% if a.urgency == 'overdue' %}background:#C24338{% elif a.urgency == 'today' %}background:#B7790A{% else %}background:#2E7D5B{% endif %};"></td>
+                        <td style="padding-left:8px;font-weight:600;color:#26242B;">{{ a.name }}</td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td style="padding:10px 8px;border-bottom:1px solid #E7E2EA;color:#5A5664;">
+                    {% if a.partner %}{{ a.partner }}{% else %}—{% endif %}
+                  </td>
+                  <td style="padding:10px 8px;border-bottom:1px solid #E7E2EA;">
+                    <span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;
+                      {% if a.urgency == 'overdue' %}background:#FBECEA;color:#C24338
+                      {% elif a.urgency == 'today' %}background:#FAF0DC;color:#B7790A
+                      {% else %}background:#E6F3EC;color:#2E7D5B{% endif %};">
+                      {{ a.label }}
+                    </span>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            {% endif %}
+
+            <!-- CTA -->
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0;">
+              <tr>
+                <td>
+                  <table role="presentation" cellpadding="0" cellspacing="0">
+                    <tr>
+                      <td>
+                        <a href="{{ odoo_url }}" style="display:inline-block;background:#714B67;color:#fff;font-size:14px;font-weight:700;padding:12px 24px;border-radius:9px;text-decoration:none;">
+                          Abrir en Odoo &#8594;
+                        </a>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="background:#FBFAFC;padding:18px 28px;border:1px solid #E7E2EA;border-radius:0 0 12px 12px;">
+            <p style="font-size:11px;color:#8B8694;margin:0;line-height:1.5;">
+              Recordatorio automático generado por el módulo de seguimiento comercial de <strong>Energizar SAS</strong> &middot; Odoo 15 Enterprise.
+              Recibes este correo porque tienes actividades u oportunidades asignadas.
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

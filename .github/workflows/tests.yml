@@ -1,0 +1,35 @@
+name: Tests
+
+# CI de verificación: corre la suite en cada push/PR. El despliegue a Cloud Run
+# NO pasa por GitHub — se hace desde la máquina local con gcloud siguiendo
+# docs/DESPLIEGUE_CLOUD_RUN.md. GitHub solo aloja el código.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    env:
+      # Valores dummy: la configuración los exige para arrancar; los tests
+      # no se conectan a Odoo ni a ningún servidor real.
+      ODOO_URL: https://test.example.com
+      ODOO_DB: test
+      ODOO_USER: test@example.com
+      ODOO_PASSWORD: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run test suite
+        run: pytest -q

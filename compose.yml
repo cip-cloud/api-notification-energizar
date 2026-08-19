@@ -1,0 +1,29 @@
+services:
+  api:
+    image: ghcr.io/${GITHUB_REPOSITORY:-energizar/energizar-api}:latest
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - ODOO_URL=${ODOO_URL}
+      - ODOO_DB=${ODOO_DB}
+      - ODOO_USER=${ODOO_USER}
+      - ODOO_PASSWORD=${ODOO_PASSWORD}
+      - ODOO_API_KEY=${ODOO_API_KEY}
+      - CRON_HOUR=${CRON_HOUR:-8}
+      - CRON_MINUTE=${CRON_MINUTE:-0}
+      - SKIP_HOLIDAYS=${SKIP_HOLIDAYS:-true}
+      - SATURDAY_IS_WORKING=${SATURDAY_IS_WORKING:-false}
+      - REMINDER_SENDER=${REMINDER_SENDER}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_STARTTLS=${SMTP_STARTTLS:-true}
+      - SMTP_SSL=${SMTP_SSL:-false}
+      - ENABLE_SCHEDULER=${ENABLE_SCHEDULER:-true}
+      - TZ=${TZ:-America/Bogota}
+      - DB_URL=${DB_URL:-sqlite+aiosqlite:///data/reminder_logs.db}
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
